@@ -1,12 +1,5 @@
+import { defaultLocation } from "@/components/types";
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-
-interface defaultLocation {
-  id: string | number;
-  city: string;
-  country: string;
-  lon: number;
-  lat: number;
-}
 
 export const initialState: defaultLocation = {
   id: "1185155",

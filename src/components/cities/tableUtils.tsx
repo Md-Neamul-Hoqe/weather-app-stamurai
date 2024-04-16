@@ -88,7 +88,7 @@ export function EnhancedTableHead(props: EnhancedTableProps) {
     };
 
   return (
-    <TableHead>
+    <TableHead sx={{ bgcolor: "rgba(250, 250, 250, 0.7)", position: "sticky" }}>
       <TableRow>
         {headCells.map((headCell) => (
           <TableCell

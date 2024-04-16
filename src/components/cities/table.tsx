@@ -1,85 +1,70 @@
 "use client";
-import { useLoadCitiesQuery } from "@/redux/features/cities/citiesApiSlice";
-import { useAppDispatch } from "@/redux/hooks";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableRow,
-  Skeleton,
-  Button,
-} from "@mui/material";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { Table, TableBody, TableCell, TableRow } from "@mui/material";
 import { MouseEvent, useEffect, useMemo, useState } from "react";
-import { City, Order, Row } from "../types";
-import { useSelector } from "react-redux";
+import { Order, Row, searchCities } from "../types";
 import { EnhancedTableHead, getComparator, stableSort } from "./tableUtils";
 import { setCities } from "@/redux/features/cities/citiesSlice";
-import useLoadCities from "@/hooks/useLoadCities";
-import Loader from "../loader";
-import Link from "next/link";
-import ErrorPage from "../error";
 import NoDataFound from "../noDataFound";
+import { getCityToRowData } from "@/utils/formateFetchedData";
+import Link from "next/link";
 
-export default function EnhancedTable() {
+export default function EnhancedTable({
+  fetchedCities,
+}: {
+  fetchedCities: any;
+}) {
   /* Declare states */
   const [order, setOrder] = useState<Order>("asc");
   const [orderBy, setOrderBy] = useState<keyof Row>("ascii_name");
+  const dispatch = useAppDispatch();
   const [rows, setRows] = useState<Row[]>([]);
 
-  /* load data from API */
-  const { cities, refetch, isLoading, isError, error } = useLoadCities();
+  /* reformat data and types */
 
-  isError && console.log("The error is: ", error);
+  const { cities } = useAppSelector((state: any) => state.citiesSlice);
 
-  /* Form the table rows by the stated data on the store */
+  const { search } = useAppSelector(
+    (state: { searchOnCities: searchCities }) => state.searchOnCities
+  );
+
+  /* store the fetched data in desired formate */
   useEffect(() => {
-    if (!isLoading && cities?.length) {
-      const newRows: Row[] = cities.map((city) => {
-        const { geoname_id, ascii_name, cou_name_en, coordinates, timezone } =
-          city;
+    const results: Row[] = getCityToRowData(fetchedCities.results);
+    const CL = cities?.length;
+    const RL = results?.length;
 
-        return {
-          geoname_id,
-          ascii_name,
-          cou_name_en,
-          lon: coordinates.lon,
-          lat: coordinates.lat,
-          timezone,
-        };
-      });
-
-      setRows(newRows);
+    if (!search) {
+      console.log("Original Data: ", results);
+      CL !== RL && dispatch(setCities(results));
+      setRows(results);
+    } else {
+      console.log("Searched Data: ", cities);
+      setRows(cities);
     }
-  }, [cities, isLoading]);
+  }, [dispatch, fetchedCities, search, cities]);
 
-  /* Store formed rows in a memo */
+  /* Store table rows in a memo */
   const visibleRows = useMemo(
     () => stableSort(rows, getComparator(order, orderBy)),
+
     [order, orderBy, rows]
   );
 
-  /* set new loaded data to the cities-slice-store */
-  // if (isLoading) {
-  //   return <Skeleton variant="rectangular" width={"100%"} height={"100%"} />;
-  // }
-
-  /* sorting as the column */
+  /* handle sorting as the column */
   const handleRequestSort = (
     event: MouseEvent<unknown>,
     property: keyof Row
   ) => {
     const isAsc = orderBy === property && order === "asc";
+
     setOrder(isAsc ? "desc" : "asc");
     setOrderBy(property);
   };
 
   return (
     <>
-      {isError ? (
-        <ErrorPage error={error} />
-      ) : isLoading ? (
-        <Loader loaderOpen={isLoading} />
-      ) : visibleRows?.length ? (
+      {visibleRows?.length ? (
         <Table
           sx={{ minWidth: 750, bgcolor: "rgba(250, 250, 250, 0.5)" }}
           aria-labelledby="tableTitle">
@@ -96,18 +81,16 @@ export default function EnhancedTable() {
             {visibleRows.map((row, index) => {
               const labelId = `cities-${index}`;
               return (
-                <TableRow
-                  hover
-                  tabIndex={-1}
-                  key={row?.geoname_id}
-                  sx={{ cursor: "pointer" }}>
+                <TableRow hover tabIndex={-1} key={row?.geoname_id}>
                   <TableCell
-                    sx={{ px: "10px" }}
+                    sx={{ px: "10px", cursor: "pointer" }}
                     id={labelId}
                     component="th"
                     scope="row"
                     padding="none">
-                    {row?.ascii_name}
+                    <Link href={`/weather/${row?.ascii_name.toLowerCase()}`}>
+                      {row?.ascii_name}
+                    </Link>
                   </TableCell>
                   <TableCell align="left">{row?.cou_name_en}</TableCell>
                   <TableCell align="left">{row?.timezone}</TableCell>

@@ -25,15 +25,13 @@ export default function RootLayout({
     <StoreProvider>
       <html lang="en">
         <body
-          className={inter.className}
+          className={`w-screen min-h-screen ${inter.className}`}
           style={{
             backgroundImage: `url(${weatherBg.src})`,
             backgroundRepeat: "no-repeat",
             backgroundSize: "cover",
-            objectFit: "cover",
-            objectPosition: "center",
           }}>
-          {children}
+          <div className="w-full h-full bg-white bg-opacity-30">{children}</div>
         </body>
       </html>
     </StoreProvider>
