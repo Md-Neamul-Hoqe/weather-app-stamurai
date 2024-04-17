@@ -23,9 +23,7 @@ export const getFilteredData = (
 
     const newString: string = city[column].toString() as string;
 
-    console.log(newString, regex);
     return newString.search(regex) !== -1;
-    // return newString.includes(regex.toString());
   });
 
   return updatedCities;

@@ -17,13 +17,17 @@ export default function EnhancedTable({
   /* Declare states */
   const [order, setOrder] = useState<Order>("asc");
   const [orderBy, setOrderBy] = useState<keyof Row>("ascii_name");
-  const dispatch = useAppDispatch();
   const [rows, setRows] = useState<Row[]>([]);
+  const dispatch = useAppDispatch();
 
   /* reformat data and types */
-
   const { cities } = useAppSelector((state: any) => state.citiesSlice);
 
+  const { id, city, country, lon, lat } = useAppSelector(
+    (state: any) => state.userSlice
+  );
+
+  /* get search string */
   const { search } = useAppSelector(
     (state: { searchOnCities: searchCities }) => state.searchOnCities
   );
@@ -35,11 +39,9 @@ export default function EnhancedTable({
     const RL = results?.length;
 
     if (!search) {
-      console.log("Original Data: ", results);
       CL !== RL && dispatch(setCities(results));
       setRows(results);
     } else {
-      console.log("Searched Data: ", cities);
       setRows(cities);
     }
   }, [dispatch, fetchedCities, search, cities]);
@@ -88,7 +90,10 @@ export default function EnhancedTable({
                     component="th"
                     scope="row"
                     padding="none">
-                    <Link href={`/weather/${row?.ascii_name.toLowerCase()}`}>
+                    <Link
+                      href={`/weather/${row?.ascii_name
+                        .toLowerCase()
+                        .toString()}?lat=${row?.lat}&lon=${row?.lon}`}>
                       {row?.ascii_name}
                     </Link>
                   </TableCell>

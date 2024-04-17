@@ -36,7 +36,6 @@ export function stableSort<T>(
 ) {
   const stabilizedThis = array.map((el, index) => [el, index] as [T, number]);
   stabilizedThis.sort((a, b) => {
-    // console.log("Compare them: ", a, b);
     const order = comparator(a[0], b[0]);
     if (order !== 0) {
       return order;

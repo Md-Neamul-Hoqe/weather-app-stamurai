@@ -2,17 +2,23 @@
 import EnhancedTable from "@/components/cities/table";
 import ErrorPage from "@/components/error";
 import FilterCities from "@/components/filter/search";
-import SelectColumn from "@/components/filter/selectColumn";
 import Loader from "@/components/loader";
-import { searchCities } from "@/components/types";
+import GetUserLocation from "@/components/user/modal";
+import UserLocation from "@/components/user/userLocation";
 import { useLoadCitiesQuery } from "@/redux/features/cities/citiesApiSlice";
-import { useAppSelector } from "@/redux/hooks";
 import { Box, Paper, TableContainer } from "@mui/material";
+import { useEffect, useState } from "react";
 
 export default function CitiesPage() {
+  const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    setOpen(true);
+  }, [setOpen]);
+
   /* Fetch data from the REST API */
   const { data, isLoading, isSuccess, isError, error } = useLoadCitiesQuery(
-    20,
+    100,
     {
       skipPollingIfUnfocused: true,
       pollingInterval: 100000,
@@ -32,8 +38,14 @@ export default function CitiesPage() {
           <Loader loaderOpen={isLoading} />
         ) : (
           <Box className="max-w-7xl mx-auto">
-            <Box className="w-full my-3">
-              <FilterCities  fetchedCities={data} />
+            <GetUserLocation
+              fetchedCities={data}
+              open={open}
+              setOpen={setOpen}
+            />
+            <Box className="flex w-full mb-3 justify-between">
+              <UserLocation />
+              <FilterCities fetchedCities={data} />
             </Box>
             <Paper
               sx={{

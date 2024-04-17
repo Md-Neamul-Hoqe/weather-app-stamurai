@@ -113,12 +113,10 @@ export default function FilterCities({
           freeSolo
           id="search-column"
           onInput={handleSearchOnTheColumn}
-          // onInput={handleSearch}
           disableClearable
           options={values?.map((value) => value)}
           renderInput={(params) => (
             <TextField
-              // onKeyUp={handleSearch}
               onBlur={handleSearchOnTheColumn}
               {...params}
               label="Search input"
@@ -137,6 +135,7 @@ export default function FilterCities({
         <Select
           labelId="column-selection-label"
           id="column-selection"
+          defaultValue="ascii_name"
           value={column}
           label="Search"
           onChange={handleSelectColumn}>

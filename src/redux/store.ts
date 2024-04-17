@@ -5,11 +5,13 @@ import { citiesSlice } from "./features/cities/citiesSlice";
 import { weatherApiSlice } from "./features/weather/weatherApiSlice";
 import { weatherSlice } from "./features/weather/weatherSlice";
 import { searchSlice } from "./features/search/searchSlice";
+import { userSlice } from "./features/users/userSlice";
 import logger from "redux-logger";
 
 const rootReducer = combineSlices(
   citiesSlice,
   weatherSlice,
+  userSlice,
   searchSlice,
   weatherApiSlice,
   citiesApiSlice
@@ -23,8 +25,8 @@ export const makeStore = () => {
     middleware: (getDefaultMiddleware) =>
       getDefaultMiddleware()
         .concat(citiesApiSlice.middleware)
-        .concat(weatherApiSlice.middleware)
-        // .concat(logger),
+        .concat(weatherApiSlice.middleware),
+    // .concat(logger),
   });
 };
 

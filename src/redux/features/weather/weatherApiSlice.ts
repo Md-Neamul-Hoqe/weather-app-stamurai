@@ -16,14 +16,16 @@ interface WeatherApiResponse {
 // Define a service using a base URL and expected endpoints
 export const weatherApiSlice = createApi({
   baseQuery: fetchBaseQuery({
-    baseUrl: "https://pro.openweathermap.org/data/2.5/weather",
+    baseUrl: "https://api.openweathermap.org/data/3.0/onecall",
   }),
   reducerPath: "weatherApi",
   tagTypes: ["Weather"],
   endpoints: (build) => ({
-    getWeather: build.query<WeatherApiResponse, number>({
-      query: (lat = 23.75, lon = 90.58333) =>
-        `?lat=${lat}&lon=${lon}&units=metric&appid=${process.env.appid}`,
+    getWeather: build.query<WeatherApiResponse, any>({
+      query: ({ lat = 23.75, lon = 90.58333 }: { lat: any; lon: any }): any => {
+        if (!lat || !lon || !process.env.NEXT_APPID) return [];
+        return `?lat=${lat}&lon=${lon}&appid=${process.env.NEXT_APPID}`;
+      },
       providesTags: (_result, _error, id) => [{ type: "Weather", id }],
     }),
   }),

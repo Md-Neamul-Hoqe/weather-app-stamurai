@@ -14,12 +14,17 @@ export interface searchCities {
   search: string | number;
 }
 
-export interface defaultLocation {
+export interface userLocation {
   id: string | number;
   city: string;
   country: string;
   lon: number;
   lat: number;
+}
+
+export interface Coordinates {
+  lon: number | string;
+  lat: number | string;
 }
 
 /* data type for loaded cities and state */
@@ -48,9 +53,4 @@ export interface EnhancedTableProps {
   order: Order;
   orderBy: string;
   rowCount: any;
-}
-
-export interface Coordinates {
-  lon: number | string;
-  lat: number | string;
 }
